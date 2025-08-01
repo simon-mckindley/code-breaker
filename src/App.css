@@ -1,0 +1,164 @@
+/* Heading */
+/* ******* */
+h1 {
+  color: rgb(219, 219, 219);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  width: max-content;
+  white-space: nowrap;
+  margin: 0;
+  box-sizing: border-box;
+  border-right: solid 2px white;
+  overflow: hidden;
+  animation:
+    typing 3.5s steps(12, end),
+    blink-caret 500ms step-end infinite,
+    remove-caret 1s linear 20s forwards;
+}
+
+.heading-wrapper {
+  padding-block: 1rem;
+  margin-inline: auto;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from {
+    width: 0
+  }
+
+  to {
+    width: 100%
+  }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: white;
+  }
+}
+
+@keyframes remove-caret {
+  to {
+    border: none;
+  }
+}
+
+/* Pegs */
+/* **** */
+.peg-wrapper {
+  display: flex;
+  gap: 1rem;
+  width: fit-content;
+  padding: var(--margin);
+  margin: 0 auto var(--margin) auto;
+  background-color: var(--bg-dark);
+  box-shadow: 4px 4px 15px 0px var(--dark-shadow);
+  border-radius: 10px;
+}
+
+.peg {
+  width: 2.1rem;
+  aspect-ratio: 1;
+  border-radius: 1000px;
+  box-shadow:
+    inset -1px -1px 7px 0px var(--dark-shadow),
+    inset 1px 1px 7px 0px var(--light-shadow);
+  cursor: pointer;
+
+  &.red {
+    background-color: var(--peg-red);
+  }
+
+  &.blue {
+    background-color: var(--peg-blue);
+  }
+
+  &.green {
+    background-color: var(--peg-green);
+  }
+
+  &.orange {
+    background-color: var(--peg-orange);
+  }
+
+  &.purple {
+    background-color: var(--peg-purple);
+  }
+
+  &.brown {
+    background-color: var(--peg-brown);
+  }
+}
+
+
+/* Game Board */
+/* ********** */
+.game-wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  padding: var(--margin);
+  background-color: var(--bg-dark);
+  box-shadow: 4px 4px 15px 0px var(--dark-shadow);
+  border-radius: 10px;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.answer-wrapper,
+.guess-inner,
+.guess-result {
+  border-radius: 6px;
+  box-shadow: inset -3px -3px 10px 0px var(--dark-shadow),
+    inset 3px 3px 10px 0px var(--light-shadow);
+}
+
+/* peg holes */
+.answer, .guess, .result {
+  width: 2rem;
+  aspect-ratio: 1;
+  border-radius: 1000px;
+  background-color: black;
+  box-shadow: inset -1px -1px 5px 0px var(--light-shadow);
+}
+
+/* result holes */
+.result {
+  width: 1rem;
+  margin-inline: 0.5rem;
+  box-shadow: inset -1px -1px 3px 0px var(--light-shadow);
+}
+
+.answer-wrapper {
+  background-color: var(--bg-overlay);
+}
+
+.guess-wrapper {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.guess-inner {
+  background-color: var(--bg-overlay);
+}
+
+.guess-result {
+  gap: 0.5rem;
+  background-color: var(--bg-overlay);
+  border-radius: 6px;
+  margin-top: 0.25rem;
+}

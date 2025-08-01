@@ -1,0 +1,39 @@
+:root {
+  --peg-red: #ff0015;
+  --peg-blue: #1878ff;
+  --peg-green: #25bba9;
+  --peg-orange: #f4a261;
+  --peg-purple: #8f47c7;
+  --peg-brown: #740000;
+
+  --peg-result-yellow: #ffff00;
+  --peg-result-white: #e0e0e0;
+
+  --dark-shadow: rgba(0, 0, 0, 0.6);
+  --light-shadow: rgba(255, 255, 255, 0.5);
+
+  --bg-color: hsl(210, 100%, 25%);
+  --bg-dark: #00305f;
+  --bg-overlay: rgba(255, 255, 255, 0.3);
+
+  --margin: 2rem;
+
+  font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+  margin: 0 auto;
+  background-color: var(--bg-color);
+  max-width: 1280px;
+}
+
+#root {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100dvh;
+}
+
+.center-wrapper {
+  display: grid;
+  place-content: center;
+}
