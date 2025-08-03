@@ -174,9 +174,18 @@ h1 {
     margin-top: 0.25rem;
 }
 
+.guess {
+    transition: opacity 200ms;
+}
+
+.locked .guess:not(:has(.peg)) {
+    opacity: 0;
+}
+
 .guess .peg {
     position: absolute;
     top: -0.1rem;
     left: -0.1rem;
     cursor: default;
+    z-index: 5;
 }

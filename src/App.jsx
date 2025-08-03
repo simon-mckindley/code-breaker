@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 import DraggablePeg from './components/DraggablePeg';
@@ -17,15 +17,35 @@ function App() {
 
   const [currentRow, setCurrentRow] = useState(0);
 
-  const handleDropColor = (rowIndex, slotIndex, color) => {
+  const [currentRowRects, setCurrentRowRects] = useState(
+    Array(4).fill({
+      'rowIndex': null,
+      'rect': null
+    })
+  );
+
+  const handleRowDropSlotRects = (slotIndex, rowIndex, boundingRect) => {
+    setCurrentRowRects(prevCurrentRowRects => {
+      const updated = [...prevCurrentRowRects];
+      updated[slotIndex] = {
+        'rowIndex': rowIndex,
+        'rect': boundingRect
+      };
+      // console.log({ slotIndex, updated });
+      return updated;
+    });
+  };
+
+  const handleDropColor = (slotIndex, rowIndex, color) => {
     setGuesses(prevGuesses => {
       const updated = [...prevGuesses];
       updated[rowIndex] = [...updated[rowIndex]];
       updated[rowIndex][slotIndex] = color;
-      console.log(updated);
+      // console.log({ updated });
       return updated;
     });
   };
+
 
   return (
     <>
@@ -38,7 +58,12 @@ function App() {
         <div className="peg-wrapper">
           {pegColors.map(color => (
             <div className='peg-inner' key={`${color}-cont`}>
-              <DraggablePeg key={color} color={color} />
+              <DraggablePeg
+                key={color}
+                color={color}
+                dropSlotsRects={currentRowRects}
+                setDropColor={handleDropColor}
+              />
             </div>
           ))}
         </div>
@@ -54,18 +79,19 @@ function App() {
           {/* 10 guess rows */}
           <div className="guess-wrapper">
             {guesses.map((row, rowIndex) => (
-              <div 
-                key={rowIndex} 
-                id={`guess-${rowIndex + 1}`} 
+              <div
+                key={rowIndex}
+                id={`guess-${rowIndex + 1}`}
                 className={rowIndex === currentRow ? '' : 'locked'}>
                 <div className="inner guess-inner">
                   {row.map((color, slotIndex) => (
                     <DropSlot
                       key={slotIndex}
-                      index={slotIndex}
+                      slotIndex={slotIndex}
+                      rowIndex={rowIndex}
                       color={color}
                       locked={rowIndex !== currentRow}
-                      onDropColor={(pegColor) => handleDropColor(rowIndex, slotIndex, pegColor)}
+                      getBoundingRect={handleRowDropSlotRects}
                     />
                   ))}
                 </div>

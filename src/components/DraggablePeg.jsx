@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function DraggablePeg({ color }) {
+export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
     const pegRef = useRef(null);
     const pos = useRef({ x: 0, y: 0, startX: 0, startY: 0 });
 
@@ -40,6 +40,29 @@ export default function DraggablePeg({ color }) {
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
+
+            const pegRect = peg.getBoundingClientRect();
+
+            const overlap = dropSlotsRects.find((slot, index) => {
+                const slotRect = slot.rect;
+                if (slotRect) {
+                    const isOverlapping =
+                        pegRect.left < slotRect.right &&
+                        pegRect.right > slotRect.left &&
+                        pegRect.top < slotRect.bottom &&
+                        pegRect.bottom > slotRect.top;
+
+                    if (isOverlapping) {
+                        console.log("Dropped on slot");
+                        setDropColor(index, slot.rowIndex, color);
+                        return true;
+                    }
+
+                    return false;
+                }
+            });
+
+            if (!overlap) console.log("Not dropped on any slot");
 
             // Snap back to original position
             peg.style.left = `${startLeft}px`;

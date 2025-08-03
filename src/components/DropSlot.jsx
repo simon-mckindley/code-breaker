@@ -1,23 +1,17 @@
+import { useRef, useEffect } from 'react';
 
-export default function DropSlot({ color, locked, onDropColor }) {
-    const handleDragOver = (e) => {
-        e.preventDefault(); // Necessary to allow drop
-    };
+export default function DropSlot({ slotIndex, rowIndex, color, locked, getBoundingRect }) {
+    const slotRef = useRef(null);
 
-    const handleDrop = (e) => {
-        if (locked) {
-            return;
+    useEffect(() => {
+        if (slotRef.current && !locked) {
+            const rect = slotRef.current.getBoundingClientRect();
+            getBoundingRect(slotIndex, rowIndex, rect);
         }
-        // const droppedColor = e.dataTransfer.getData("text/plain");
-        onDropColor(droppedColor);
-    };
+    }, []);
 
     return (
-        <div
-            className="guess"
-            // onDragOver={handleDragOver}
-            onDrop={handleDrop}
-        >
+        <div ref={slotRef} className="guess">
             {color && <div className={`peg ${color}`} />}
         </div>
     );
