@@ -8,12 +8,12 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
         const peg = pegRef.current;
         if (!peg) return;
 
-        const rect = peg.getBoundingClientRect();
-        const parentRect = peg.offsetParent?.getBoundingClientRect();
+        // const rect = peg.getBoundingClientRect();
+        // const parentRect = peg.offsetParent?.getBoundingClientRect();
 
         // Store initial position relative to offset parent
-        const startLeft = rect.left - (parentRect?.left || 0);;
-        const startTop = rect.top - (parentRect?.top || 0);
+        // const startLeft = rect.left - (parentRect?.left || 0);
+        // const startTop = rect.top - (parentRect?.top || 0);
 
         const onMouseDown = (e) => {
             e.preventDefault();
@@ -22,6 +22,8 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
 
             document.addEventListener("mousemove", onMouseMove);
             document.addEventListener("mouseup", onMouseUp);
+
+            peg.style.cursor = 'grabbing';
         };
 
         const onMouseMove = (e) => {
@@ -40,6 +42,7 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
+            peg.style.cursor = '';
 
             const pegRect = peg.getBoundingClientRect();
 
@@ -65,8 +68,8 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
             if (!overlap) console.log("Not dropped on any slot");
 
             // Snap back to original position
-            peg.style.left = `${startLeft}px`;
-            peg.style.top = `${startTop}px`;
+            peg.style.left = '';
+            peg.style.top = '';
         };
 
         peg.addEventListener("mousedown", onMouseDown);

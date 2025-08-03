@@ -12,9 +12,10 @@
   --dark-shadow: rgba(0, 0, 0, 0.6);
   --light-shadow: rgba(255, 255, 255, 0.5);
 
-  --bg-color: hsl(210, 100%, 25%);
+  --bg-color: #004080;
   --bg-dark: #00305f;
   --bg-overlay: rgba(255, 255, 255, 0.3);
+  --text-color: #dbdbdb;
 
   --margin: 2rem;
 

@@ -46,6 +46,11 @@ function App() {
     });
   };
 
+  const handleButtonClick = () => {
+    setCurrentRow(prevCurrentRow => { return (prevCurrentRow + 1) });
+    console.log(currentRow);
+  };
+
 
   return (
     <>
@@ -54,18 +59,28 @@ function App() {
       </div>
 
       <div className="center-wrapper">
-        {/* Draggable pegs */}
-        <div className="peg-wrapper">
-          {pegColors.map(color => (
-            <div className='peg-inner' key={`${color}-cont`}>
-              <DraggablePeg
-                key={color}
-                color={color}
-                dropSlotsRects={currentRowRects}
-                setDropColor={handleDropColor}
-              />
-            </div>
-          ))}
+
+        <div className='game-head-wrapper'>
+          {/* Draggable pegs */}
+          <div className="peg-wrapper">
+            {pegColors.map(color => (
+              <div className='peg-inner' key={`${color}-cont`}>
+                <DraggablePeg
+                  key={color}
+                  color={color}
+                  dropSlotsRects={currentRowRects}
+                  setDropColor={handleDropColor}
+                />
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className='guess-btn'
+            onClick={handleButtonClick}>
+            ?
+          </button>
         </div>
 
         <div className="game-wrapper">

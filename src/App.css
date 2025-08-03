@@ -1,7 +1,7 @@
 /* Heading */
 /* ******* */
 h1 {
-    color: rgb(219, 219, 219);
+    color: var(--text-color);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
@@ -13,8 +13,8 @@ h1 {
     overflow: hidden;
     animation:
         typing 5s steps(12, end),
-        blink-caret 500ms step-end infinite,
-        remove-caret 1s linear 15s forwards;
+        blink-cursor 500ms step-end infinite,
+        remove-cursor 1s linear 15s forwards;
 }
 
 .heading-wrapper {
@@ -34,7 +34,7 @@ h1 {
 }
 
 /* The typewriter cursor effect */
-@keyframes blink-caret {
+@keyframes blink-cursor {
     from, to {
         border-color: transparent;
     }
@@ -44,9 +44,40 @@ h1 {
     }
 }
 
-@keyframes remove-caret {
+@keyframes remove-cursor {
     to {
         border: none;
+    }
+}
+
+.game-head-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--margin);
+    margin-block-end: var(--margin);
+}
+
+.guess-btn {
+    --_shadow-blur: 15px;
+    --_shadow-spread: 4px;
+    color: var(--text-color);
+    font: inherit;
+    font-size: 3rem;
+    font-weight: 900;
+    border: none;
+    background-color: #008000;
+    border-radius: 10px;
+    height: 100%;
+    aspect-ratio: 1 / 1.5;
+    cursor: pointer;
+    box-shadow: inset -3px -3px 10px 0px var(--dark-shadow),
+        inset 3px 3px 10px 0px var(--light-shadow),
+        var(--_shadow-spread) var(--_shadow-spread) var(--_shadow-blur) 0px var(--dark-shadow);
+
+    &:active {
+        --_shadow-blur: 6px;
+        --_shadow-spread: 2px;
     }
 }
 
@@ -58,7 +89,6 @@ h1 {
     gap: 1rem;
     width: fit-content;
     padding: var(--margin);
-    margin: 0 auto var(--margin) auto;
     background-color: var(--bg-dark);
     box-shadow: 4px 4px 15px 0px var(--dark-shadow);
     border-radius: 10px;
