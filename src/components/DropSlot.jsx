@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-export default function DropSlot({ slotIndex, rowIndex, color, locked, getBoundingRect }) {
+export default function DropSlot({ slotIndex, rowIndex, color, locked, rectTrigger, getBoundingRect }) {
     const slotRef = useRef(null);
 
     useEffect(() => {
@@ -8,7 +8,7 @@ export default function DropSlot({ slotIndex, rowIndex, color, locked, getBoundi
             const rect = slotRef.current.getBoundingClientRect();
             getBoundingRect(slotIndex, rowIndex, rect);
         }
-    }, []);
+    }, [rectTrigger]);
 
     return (
         <div ref={slotRef} className="guess">

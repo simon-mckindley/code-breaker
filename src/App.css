@@ -74,10 +74,17 @@ h1 {
     box-shadow: inset -3px -3px 10px 0px var(--dark-shadow),
         inset 3px 3px 10px 0px var(--light-shadow),
         var(--_shadow-spread) var(--_shadow-spread) var(--_shadow-blur) 0px var(--dark-shadow);
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
 
-    &:active {
+    &:active:not(:disabled) {
         --_shadow-blur: 6px;
         --_shadow-spread: 2px;
+    }
+
+    &:disabled {
+        color: darkgrey;
+        background-color: grey;
+        cursor: not-allowed;
     }
 }
 

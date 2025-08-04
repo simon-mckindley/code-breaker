@@ -24,6 +24,20 @@ function App() {
     })
   );
 
+  const [rectTrigger, setRectTrigger] = useState(0);
+
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    // Clear previous row rects
+    setCurrentRowRects(Array(4).fill({ rowIndex: null, rect: null }));
+    // Disable button
+    setButtonDisabled(true);
+    // Trigger re-collection in DropSlot components
+    setRectTrigger(prev => prev + 1);
+  }, [currentRow]);
+
+
   const handleRowDropSlotRects = (slotIndex, rowIndex, boundingRect) => {
     setCurrentRowRects(prevCurrentRowRects => {
       const updated = [...prevCurrentRowRects];
@@ -31,6 +45,7 @@ function App() {
         'rowIndex': rowIndex,
         'rect': boundingRect
       };
+
       // console.log({ slotIndex, updated });
       return updated;
     });
@@ -41,14 +56,23 @@ function App() {
       const updated = [...prevGuesses];
       updated[rowIndex] = [...updated[rowIndex]];
       updated[rowIndex][slotIndex] = color;
-      // console.log({ updated });
+
+      if (!updated[currentRow].includes(null)) {
+        // Enable button
+        setButtonDisabled(false);
+      }
+      // console.log({ buttonDisabled, updated });
       return updated;
     });
   };
 
   const handleButtonClick = () => {
-    setCurrentRow(prevCurrentRow => { return (prevCurrentRow + 1) });
-    console.log(currentRow);
+    // console.log(guesses[currentRow]);
+    if (guesses[currentRow].includes(null)) {
+      console.log('Not all slots filled!');
+      return;
+    }
+    setCurrentRow(currentRow => currentRow + 1);
   };
 
 
@@ -78,7 +102,8 @@ function App() {
           <button
             type="button"
             className='guess-btn'
-            onClick={handleButtonClick}>
+            onClick={handleButtonClick}
+            disabled={buttonDisabled}>
             ?
           </button>
         </div>
@@ -106,6 +131,7 @@ function App() {
                       rowIndex={rowIndex}
                       color={color}
                       locked={rowIndex !== currentRow}
+                      rectTrigger={rectTrigger}
                       getBoundingRect={handleRowDropSlotRects}
                     />
                   ))}
