@@ -1,4 +1,8 @@
 
 export default function AnswerSlot({ color }) {
-    return <span className={`answer ${color}`}></span>;
+    return (
+        <div className='answer'>
+            {color && <div className={`peg ${color}`} />}
+        </div>
+    );
 }

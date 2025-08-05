@@ -120,7 +120,6 @@ h1 {
         inset -1px -1px 7px 0px var(--dark-shadow),
         inset 1px 1px 7px 0px var(--light-shadow);
     cursor: grab;
-    z-index: 10;
 
     &.red {
         background-color: var(--peg-red);
@@ -187,16 +186,6 @@ h1 {
     box-shadow: inset -1px -1px 5px 0px var(--light-shadow);
 }
 
-/* result holes */
-.result {
-    width: 1rem;
-    box-shadow: inset -1px -1px 3px 0px var(--light-shadow);
-}
-
-.answer-wrapper {
-    background-color: var(--bg-overlay);
-}
-
 .guess-wrapper {
     display: flex;
     gap: 0.75rem;
@@ -207,21 +196,27 @@ h1 {
 }
 
 .guess {
-    transition: opacity 200ms;
+    transition: opacity 300ms;
 }
 
-.locked .guess:not(:has(.peg)) {
-    opacity: 0;
+/* fade contents of locked container unless it already has a peg */
+.locked .guess:not(:has(.peg)),
+.locked:not(:has(.result[data-peg=true])) .result {
+    opacity: 0.3;
 }
 
-.guess .peg {
-    position: absolute;
-    top: -0.1rem;
-    left: -0.1rem;
-    cursor: default;
-    z-index: 5;
+.guess,
+.answer {
+    .peg {
+        position: absolute;
+        top: -0.1rem;
+        left: -0.1rem;
+        cursor: default;
+        z-index: 5;
+    }
 }
 
+/* Result sections */
 .guess-result {
     display: grid;
     grid-template-columns: auto auto;
@@ -232,9 +227,11 @@ h1 {
     margin-top: 0.25rem;
 }
 
+/* result holes */
 .result {
     --_result-pin-delay: 300ms;
-    position: relative;
+    width: 1rem;
+    box-shadow: inset -1px -1px 3px 0px var(--light-shadow);
 
     &:nth-of-type(2) {
         --_result-pin-delay: 1300ms;
@@ -256,7 +253,7 @@ h1 {
     width: 1.1rem;
     aspect-ratio: 1;
     border-radius: 1000px;
-    z-index: 50;
+    z-index: 20;
     box-shadow:
         inset -1px -1px 5px 0px var(--dark-shadow),
         inset 1px 1px 5px 0px var(--light-shadow);
@@ -285,5 +282,34 @@ h1 {
         opacity: 1;
         translate: 0 0;
         scale: 1;
+    }
+}
+
+/* Answer section */
+.answer-wrapper {
+    --_cover-position: -4rem;
+    position: relative;
+    background-color: var(--bg-overlay);
+    overflow: hidden;
+}
+
+.answer-wrapper:after {
+    content: '';
+    position: absolute;
+    inset: 0.5rem;
+    background-color: var(--bg-dark);
+    z-index: 20;
+    border-radius: 6px;
+    box-shadow:
+        inset -3px -3px 10px 0px var(--dark-shadow),
+        inset 3px 3px 10px 0px var(--light-shadow);
+    translate: var(--_cover-position);
+    /* animation: cover-in 1500ms ease 1000ms forwards; */
+    transition: translate 2000ms;
+}
+
+@keyframes cover-in {
+    100% {
+        translate: 0;
     }
 }

@@ -17,6 +17,7 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
             document.addEventListener("mouseup", onMouseUp);
 
             peg.style.cursor = 'grabbing';
+            peg.style.zIndex = '50';
         };
 
         const onMouseMove = (e) => {
@@ -36,6 +37,7 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
             peg.style.cursor = '';
+            peg.style.zIndex = '';
 
             const pegRect = peg.getBoundingClientRect();
 

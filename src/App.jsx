@@ -22,6 +22,7 @@ function App() {
     pegColors[getRand(0, pegColors.length - 1)],
     pegColors[getRand(0, pegColors.length - 1)]
   ]);
+  // console.log({ target })
 
   // 10 rows of 4 guess slots each
   const [guesses, setGuesses] = useState(
@@ -107,10 +108,11 @@ function App() {
 
     const newResult = checkResult(guesses[currentRow]);
 
-    console.log(newResult);
+    // console.log(newResult);
     if (newResult.every((value) => value === 'red')) {
-      console.log("WINNER 2");
-      return
+      console.log("WINNER");
+      setAnswerPositions([...target]);
+      return;
     }
 
     if (currentRow < 9) {
@@ -123,18 +125,40 @@ function App() {
   };
 
   // 'red'=both correct / 'white'=color correct
-  const checkResult = (currentGuess) => {
-    let newResult = null;
-    if (currentGuess.every((color, index) => color === target[index])) {
-      // console.log("WINNER 1");
-      newResult = Array(4).fill('red');
-    } else {
-      newResult = Array(4).fill('white');
+  function checkResult(currentGuess) {
+    const newResult = []; // will be filled with 'red' and 'white'
+    const targetCopy = [...target];
+    const guessCopy = [...currentGuess];
+
+    // First pass: find exact matches (correct color and position)
+    for (let i = 0; i < targetCopy.length; i++) {
+      if (guessCopy[i] === targetCopy[i]) {
+        newResult.push('red');
+        targetCopy[i] = null; // remove matched item
+        guessCopy[i] = null;
+      }
+    }
+
+    // Second pass: find correct color but wrong position
+    for (let i = 0; i < targetCopy.length; i++) {
+      if (guessCopy[i] !== null) {
+        const index = targetCopy.indexOf(guessCopy[i]);
+        if (index !== -1) {
+          newResult.push('white');
+          targetCopy[index] = null; // remove matched item
+        }
+      }
+    }
+
+    // Make sure the result is the full length
+    for (let i = newResult.length; i < targetCopy.length; i++) {
+      newResult.push('');
     }
 
     handleResultsUpdate(newResult);
     return newResult;
   }
+
 
   return (
     <>
@@ -170,7 +194,7 @@ function App() {
 
         <div className="game-wrapper">
           {/* Hidden answer row */}
-          <div className="inner answer-wrapper">
+          <div className="inner answer-wrapper" style={{ '--_cover-position': '-2rem' }}>
             {answerPositions.map((color, index) => (
               <AnswerSlot key={index} color={color} />
             ))}
@@ -197,10 +221,14 @@ function App() {
                   ))}
                 </div>
 
-                <ResultContainer key={rowIndex} result={results[rowIndex]} />
+                <ResultContainer
+                  key={rowIndex}
+                  locked={rowIndex !== currentRow}
+                  result={results[rowIndex]}
+                />
               </div>
             ))}
-            
+
           </div>
         </div>
       </div>
