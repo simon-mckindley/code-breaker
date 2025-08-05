@@ -4,11 +4,24 @@ import './App.css';
 import DraggablePeg from './components/DraggablePeg';
 import DropSlot from './components/DropSlot';
 import AnswerSlot from './components/AnswerSlot';
-import ResultSlot from './components/ResultSlot';
+import ResultContainer from './components/ResultContainer';
+
+function getRand(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function App() {
-  const positions = ['one', 'two', 'three', 'four'];
   const pegColors = ['red', 'blue', 'green', 'orange', 'purple', 'brown'];
+
+  // Set target
+  const [target] = useState(() => [
+    pegColors[getRand(0, pegColors.length - 1)],
+    pegColors[getRand(0, pegColors.length - 1)],
+    pegColors[getRand(0, pegColors.length - 1)],
+    pegColors[getRand(0, pegColors.length - 1)]
+  ]);
 
   // 10 rows of 4 guess slots each
   const [guesses, setGuesses] = useState(
@@ -27,6 +40,13 @@ function App() {
   const [rectTrigger, setRectTrigger] = useState(0);
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
+
+  const [results, setResults] = useState(
+    Array.from({ length: 10 }, () => Array(4).fill(''))
+  );
+
+  const [answerPositions, setAnswerPositions] = useState(Array(4).fill(''));
+
 
   useEffect(() => {
     // Clear previous row rects
@@ -66,15 +86,55 @@ function App() {
     });
   };
 
+  const handleResultsUpdate = (newResult) => {
+    setResults(prevResults => {
+      const updated = [...prevResults];
+      updated[currentRow] = [...newResult];
+
+      // console.log({ currentRow, updated });
+      return updated;
+    });
+  }
+
   const handleButtonClick = () => {
     // console.log(guesses[currentRow]);
     if (guesses[currentRow].includes(null)) {
       console.log('Not all slots filled!');
       return;
     }
-    setCurrentRow(currentRow => currentRow + 1);
+    console.log('Target: ' + target);
+    console.log('Guess: ' + guesses[currentRow]);
+
+    const newResult = checkResult(guesses[currentRow]);
+
+    console.log(newResult);
+    if (newResult.every((value) => value === 'red')) {
+      console.log("WINNER 2");
+      return
+    }
+
+    if (currentRow < 9) {
+      setCurrentRow(currentRow => currentRow + 1);
+      console.log("TRY AGAIN");
+      return;
+    }
+
+    console.log("LOSER");
   };
 
+  // 'red'=both correct / 'white'=color correct
+  const checkResult = (currentGuess) => {
+    let newResult = null;
+    if (currentGuess.every((color, index) => color === target[index])) {
+      // console.log("WINNER 1");
+      newResult = Array(4).fill('red');
+    } else {
+      newResult = Array(4).fill('white');
+    }
+
+    handleResultsUpdate(newResult);
+    return newResult;
+  }
 
   return (
     <>
@@ -111,8 +171,8 @@ function App() {
         <div className="game-wrapper">
           {/* Hidden answer row */}
           <div className="inner answer-wrapper">
-            {positions.map((pos, index) => (
-              <AnswerSlot key={index} position={pos} />
+            {answerPositions.map((color, index) => (
+              <AnswerSlot key={index} color={color} />
             ))}
           </div>
 
@@ -136,14 +196,11 @@ function App() {
                     />
                   ))}
                 </div>
-                <div className="guess-result">
-                  <ResultSlot position="one" />
-                  <ResultSlot position="two" />
-                  <ResultSlot position="three" />
-                  <ResultSlot position="four" />
-                </div>
+
+                <ResultContainer key={rowIndex} result={results[rowIndex]} />
               </div>
             ))}
+            
           </div>
         </div>
       </div>

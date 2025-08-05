@@ -1,4 +1,4 @@
 
-export default function ResultSlot({ position }) {
-    return <span className={`result ${position}`}></span>;
+export default function ResultSlot({ color }) {
+    // return <span className={`result ${color}`}></span>;
 }

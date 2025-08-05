@@ -5,19 +5,21 @@ h1 {
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
-    width: max-content;
+    width: 0;
     white-space: nowrap;
     margin: 0;
     box-sizing: border-box;
     border-right: solid 2px white;
     overflow: hidden;
     animation:
-        typing 5s steps(12, end),
+        typing 5s steps(12, end) 1s forwards,
         blink-cursor 500ms step-end infinite,
-        remove-cursor 1s linear 15s forwards;
+        remove-cursor 1s linear 16s forwards;
 }
 
 .heading-wrapper {
+    display: flex;
+    justify-content: center;
     padding-block: 1rem;
     margin-inline: auto;
 }
@@ -104,6 +106,9 @@ h1 {
 .peg-inner {
     width: 2.2rem;
     aspect-ratio: 1;
+    border-radius: 1000px;
+    background-color: var(--bg-color);
+    box-shadow: inset 4px 4px 15px 0px var(--dark-shadow);
 }
 
 .peg {
@@ -178,7 +183,7 @@ h1 {
     width: 2rem;
     aspect-ratio: 1;
     border-radius: 1000px;
-    background-color: black;
+    background-color: rgb(24, 24, 24);
     box-shadow: inset -1px -1px 5px 0px var(--light-shadow);
 }
 
