@@ -206,16 +206,6 @@ h1 {
     background-color: var(--bg-overlay);
 }
 
-.guess-result {
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 0.5rem;
-    padding: 1rem;
-    background-color: var(--bg-overlay);
-    border-radius: 6px;
-    margin-top: 0.25rem;
-}
-
 .guess {
     transition: opacity 200ms;
 }
@@ -230,4 +220,70 @@ h1 {
     left: -0.1rem;
     cursor: default;
     z-index: 5;
+}
+
+.guess-result {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--bg-overlay);
+    border-radius: 6px;
+    margin-top: 0.25rem;
+}
+
+.result {
+    --_result-pin-delay: 300ms;
+    position: relative;
+
+    &:nth-of-type(2) {
+        --_result-pin-delay: 1300ms;
+    }
+
+    &:nth-of-type(3) {
+        --_result-pin-delay: 2300ms;
+    }
+
+    &:nth-of-type(4) {
+        --_result-pin-delay: 3300ms;
+    }
+}
+
+.result[data-peg=true]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 1.1rem;
+    aspect-ratio: 1;
+    border-radius: 1000px;
+    z-index: 50;
+    box-shadow:
+        inset -1px -1px 5px 0px var(--dark-shadow),
+        inset 1px 1px 5px 0px var(--light-shadow);
+    translate: -3rem 3rem;
+    scale: 1.2;
+    opacity: 0;
+    animation: result-pins 2000ms ease var(--_result-pin-delay) forwards;
+}
+
+.result.red::after {
+    background-color: red;
+}
+
+.result.white::after {
+    background-color: white;
+}
+
+@keyframes result-pins {
+    30% {
+        opacity: 1;
+        translate: -3rem 3rem;
+        scale: 1.2;
+    }
+
+    100% {
+        opacity: 1;
+        translate: 0 0;
+        scale: 1;
+    }
 }
