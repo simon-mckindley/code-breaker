@@ -85,11 +85,11 @@ function App() {
                 'rect': boundingRect
             };
 
-            // console.log({ slotIndex, updated });
             return updated;
         });
     };
 
+    // Start the game
     const handleGoBtnClick = () => {
         setCoverPos(0);
         setGoBtnDisabled(true);
@@ -112,7 +112,7 @@ function App() {
                 // Enable button
                 setCheckBtnDisabled(false);
             }
-            // console.log({ buttonDisabled, updated });
+
             return updated;
         });
     };
@@ -122,23 +122,20 @@ function App() {
             const updated = [...prevResults];
             updated[currentRow] = [...newResult];
 
-            // console.log({ currentRow, updated });
             return updated;
         });
     }
 
     const handleCheckBtnClick = () => {
-        // console.log(guesses[currentRow]);
         if (guesses[currentRow].includes(null)) {
             console.log('Not all slots filled!');
             return;
         }
-        console.log('Target: ' + target);
-        console.log('Guess: ' + guesses[currentRow]);
+        // console.log('Target: ' + target);
+        // console.log('Guess: ' + guesses[currentRow]);
 
         const newResult = checkResult(guesses[currentRow]);
 
-        // console.log(newResult);
         if (newResult.every((value) => value === 'red')) {
             console.log("WINNER");
             handleGameEnd(true);
