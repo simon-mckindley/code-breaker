@@ -76,6 +76,16 @@ function App() {
         setRectTrigger(prev => prev + 1);
     }, [currentRow]);
 
+    // Recalculate drop slot positions on window resize
+    useEffect(() => {
+        const handleResize = () => {
+            setRectTrigger(prev => prev + 1);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [])
+
 
     const handleRowDropSlotRects = (slotIndex, rowIndex, boundingRect) => {
         setCurrentRowRects(prevCurrentRowRects => {

@@ -8,37 +8,32 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
         const peg = pegRef.current;
         if (!peg) return;
 
-        const onMouseDown = (e) => {
-            e.preventDefault();
-            pos.current.startX = e.clientX;
-            pos.current.startY = e.clientY;
+        const getEventClientCoords = (e) => {
+            if (e.touches && e.touches[0]) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
+        };
 
-            document.addEventListener("mousemove", onMouseMove);
-            document.addEventListener("mouseup", onMouseUp);
-
+        const startDrag = (x, y) => {
+            pos.current.startX = x;
+            pos.current.startY = y;
             peg.style.cursor = 'grabbing';
             peg.style.zIndex = '50';
         };
 
-        const onMouseMove = (e) => {
-            e.preventDefault();
-
-            const dx = e.clientX - pos.current.startX;
-            const dy = e.clientY - pos.current.startY;
-
-            pos.current.startX = e.clientX;
-            pos.current.startY = e.clientY;
-
+        const moveDrag = (x, y) => {
+            const dx = x - pos.current.startX;
+            const dy = y - pos.current.startY;
+            pos.current.startX = x;
+            pos.current.startY = y;
             peg.style.left = `${peg.offsetLeft + dx}px`;
             peg.style.top = `${peg.offsetTop + dy}px`;
         };
 
-        const onMouseUp = () => {
-            document.removeEventListener("mousemove", onMouseMove);
-            document.removeEventListener("mouseup", onMouseUp);
+        const endDrag = () => {
             peg.style.cursor = '';
             peg.style.zIndex = '';
-
             const pegRect = peg.getBoundingClientRect();
 
             const overlap = dropSlotsRects.find((slot, index) => {
@@ -51,28 +46,66 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
                         pegRect.bottom > slotRect.top;
 
                     if (isOverlapping) {
-                        // console.log("Dropped on slot");
                         setDropColor(index, slot.rowIndex, color);
                         return true;
                     }
-
-                    return false;
                 }
+                return false;
             });
 
-            // if (!overlap) console.log("Not dropped on any slot");
-
-            // Snap back to original position
             peg.style.left = '';
             peg.style.top = '';
         };
 
+        const onMouseDown = (e) => {
+            e.preventDefault();
+            const { x, y } = getEventClientCoords(e);
+            startDrag(x, y);
+
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp);
+        };
+
+        const onMouseMove = (e) => {
+            e.preventDefault();
+            const { x, y } = getEventClientCoords(e);
+            moveDrag(x, y);
+        };
+
+        const onMouseUp = () => {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+            endDrag();
+        };
+
+        const onTouchStart = (e) => {
+            const { x, y } = getEventClientCoords(e);
+            startDrag(x, y);
+
+            document.addEventListener("touchmove", onTouchMove, { passive: false });
+            document.addEventListener("touchend", onTouchEnd);
+        };
+
+        const onTouchMove = (e) => {
+            e.preventDefault(); // prevent scrolling
+            const { x, y } = getEventClientCoords(e);
+            moveDrag(x, y);
+        };
+
+        const onTouchEnd = () => {
+            document.removeEventListener("touchmove", onTouchMove);
+            document.removeEventListener("touchend", onTouchEnd);
+            endDrag();
+        };
+
         peg.addEventListener("mousedown", onMouseDown);
+        peg.addEventListener("touchstart", onTouchStart, { passive: false });
 
         return () => {
             peg.removeEventListener("mousedown", onMouseDown);
+            peg.removeEventListener("touchstart", onTouchStart);
         };
-    });
+    }, [dropSlotsRects, setDropColor, color]);
 
     return (
         <div ref={pegRef} className={`peg ${color}`} />
