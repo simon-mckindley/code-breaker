@@ -1,6 +1,6 @@
-### Code Breaker
+# Code Breaker
 
-# 🎯 Draggable Pegs Game
+## 🎯 Draggable Pegs Game
 
 This is a simple React-based interactive peg game where users can drag colored pegs and drop them onto slots. It supports both mouse and touch interactions for a responsive experience across desktop and mobile devices.
 
@@ -40,7 +40,7 @@ This is a simple React-based interactive peg game where users can drag colored p
 
 ## 🎨 Styling
 
-The background is styled using `linear-gradient` with equal-sized color stripes:
+The dialog background is styled using `linear-gradient` with equal-sized color stripes:
 
 ```css
 background: linear-gradient(
