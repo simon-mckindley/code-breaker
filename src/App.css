@@ -58,37 +58,46 @@ h1 {
     justify-content: center;
     gap: var(--margin);
     margin-block-end: var(--margin);
-}
 
-.guess-btn {
-    --_shadow-blur: 15px;
-    --_shadow-spread: 4px;
-    color: var(--text-color);
-    font: inherit;
-    font-size: 3rem;
-    font-weight: 900;
-    border: none;
-    background-color: #008000;
-    border-radius: 10px;
-    height: 100%;
-    aspect-ratio: 1 / 1.5;
-    cursor: pointer;
-    box-shadow: inset -3px -3px 10px 0px var(--dark-shadow),
-        inset 3px 3px 10px 0px var(--light-shadow),
-        var(--_shadow-spread) var(--_shadow-spread) var(--_shadow-blur) 0px var(--dark-shadow);
-    transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+    button {
+        --_shadow-blur: 15px;
+        --_shadow-spread: 4px;
+        color: var(--text-color);
+        font: inherit;
+        font-weight: 900;
+        height: 100%;
+        aspect-ratio: 1 / 1.5;
+        border: none;
+        background-color: #008000;
+        border-radius: 10px;
 
-    &:active:not(:disabled) {
-        --_shadow-blur: 6px;
-        --_shadow-spread: 2px;
+        cursor: pointer;
+        box-shadow: inset -3px -3px 10px 0px var(--dark-shadow),
+            inset 3px 3px 10px 0px var(--light-shadow),
+            var(--_shadow-spread) var(--_shadow-spread) var(--_shadow-blur) 0px var(--dark-shadow);
+        transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+
+        &:active:not(:disabled) {
+            --_shadow-blur: 6px;
+            --_shadow-spread: 2px;
+        }
+
+        &:disabled {
+            color: darkgrey;
+            background-color: grey;
+            cursor: not-allowed;
+        }
     }
 
-    &:disabled {
-        color: darkgrey;
-        background-color: grey;
-        cursor: not-allowed;
+    .start-btn {
+        font-size: 2.2rem;
+    }
+
+    .guess-btn {
+        font-size: 3rem;
     }
 }
+
 
 /* Pegs */
 /* **** */
@@ -311,5 +320,91 @@ h1 {
 @keyframes cover-in {
     100% {
         translate: 0;
+    }
+}
+
+
+/* Message Dialog */
+/* ************** */
+.message-dialog {
+    position: relative;
+    font-size: 1.2rem;
+    color: var(--bg-dark);
+    background-color: var(--text-color);
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    opacity: 0;
+    animation: dialog-in 1000ms ease forwards;
+
+    p {
+        margin: 1rem 2rem 3rem;
+    }
+
+    .shadow-box {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        box-shadow:
+            inset -3px -3px 10px 0px var(--dark-shadow),
+            inset 3px 3px 10px 0px var(--light-shadow);
+    }
+}
+
+.dialog-header {
+    display: flex;
+    align-items: start;
+    margin: 1.5rem 1.5rem 0;
+
+    h3 {
+        font-size: 1.5rem;
+        text-align: center;
+        text-transform: capitalize;
+        margin-block-end: 0;
+    }
+
+    button {
+        color: var(--text-color);
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: 900;
+        background-color: var(--bg-dark);
+        border: none;
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        margin-inline-start: auto;
+        cursor: pointer;
+        box-shadow:
+            inset -1px -1px 3px 0px var(--dark-shadow),
+            inset 1px 1px 3px 0px var(--light-shadow),
+            1px 1px 2px 0px var(--dark-shadow);
+    }
+}
+
+.dialog-footer {
+    height: 3.5rem;
+    background: linear-gradient(90deg,
+            var(--peg-red) 0%,
+            var(--peg-red) 16.66%,
+            var(--peg-blue) 16.66%,
+            var(--peg-blue) 33.33%,
+            var(--peg-green) 33.33%,
+            var(--peg-green) 50%,
+            var(--peg-orange) 50%,
+            var(--peg-orange) 66.66%,
+            var(--peg-purple) 66.66%,
+            var(--peg-purple) 83.33%,
+            var(--peg-brown) 83.33%,
+            var(--peg-brown) 100%);
+
+}
+
+.message-dialog::backdrop {
+    background-color: var(--dark-shadow);
+}
+
+@keyframes dialog-in {
+    100% {
+        opacity: 1;
     }
 }

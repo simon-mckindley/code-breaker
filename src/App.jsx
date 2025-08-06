@@ -5,235 +5,290 @@ import DraggablePeg from './components/DraggablePeg';
 import DropSlot from './components/DropSlot';
 import AnswerSlot from './components/AnswerSlot';
 import ResultContainer from './components/ResultContainer';
+import MessageDialog from './components/MessageDialog';
 
 function getRand(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function App() {
-  const pegColors = ['red', 'blue', 'green', 'orange', 'purple', 'brown'];
+    const pegColors = ['red', 'blue', 'green', 'orange', 'purple', 'brown'];
 
-  // Set target
-  const [target] = useState(() => [
-    pegColors[getRand(0, pegColors.length - 1)],
-    pegColors[getRand(0, pegColors.length - 1)],
-    pegColors[getRand(0, pegColors.length - 1)],
-    pegColors[getRand(0, pegColors.length - 1)]
-  ]);
-  // console.log({ target })
+    // Message dialog
+    const [dialogTitle, setDialogTitle] = useState('');
+    const [dialogMessage, setDialogMessage] = useState('');
+    const dialogRef = useRef();
 
-  // 10 rows of 4 guess slots each
-  const [guesses, setGuesses] = useState(
-    Array.from({ length: 10 }, () => Array(4).fill(null))
-  );
+    const openMessageDialog = (title, message) => {
+        setDialogTitle(title);
+        setDialogMessage(message);
+        dialogRef.current?.open();
+    };
 
-  const [currentRow, setCurrentRow] = useState(0);
+    // Set target
+    const [target, setTarget] = useState([]);
 
-  const [currentRowRects, setCurrentRowRects] = useState(
-    Array(4).fill({
-      'rowIndex': null,
-      'rect': null
-    })
-  );
+    function setNewTarget() {
+        setTarget([
+                pegColors[getRand(0, pegColors.length - 1)],
+                pegColors[getRand(0, pegColors.length - 1)],
+                pegColors[getRand(0, pegColors.length - 1)],
+                pegColors[getRand(0, pegColors.length - 1)]
+            ]);
+    };
 
-  const [rectTrigger, setRectTrigger] = useState(0);
+    // 10 rows of 4 guess slots each
+    const [guesses, setGuesses] = useState(
+        Array.from({ length: 10 }, () => Array(4).fill(null))
+    );
 
-  const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [currentRow, setCurrentRow] = useState(-1);
 
-  const [results, setResults] = useState(
-    Array.from({ length: 10 }, () => Array(4).fill(''))
-  );
+    const [currentRowRects, setCurrentRowRects] = useState(
+        Array(4).fill({
+            'rowIndex': null,
+            'rect': null
+        })
+    );
 
-  const [answerPositions, setAnswerPositions] = useState(Array(4).fill(''));
+    const [rectTrigger, setRectTrigger] = useState(0);
+
+    const [checkBtnDisabled, setCheckBtnDisabled] = useState(true);
+    const [goBtnDisabled, setGoBtnDisabled] = useState(false);
+
+    const [results, setResults] = useState(
+        Array.from({ length: 10 }, () => Array(4).fill(''))
+    );
+
+    const [answerPositions, setAnswerPositions] = useState(Array(4).fill(''));
+
+    const [answerCoverPos, setCoverPos] = useState(-4);
+
+    // When currentRow changes
+    useEffect(() => {
+        // Clear previous row rects
+        setCurrentRowRects(Array(4).fill({ rowIndex: null, rect: null }));
+        // Disable button
+        setCheckBtnDisabled(true);
+        // Trigger re-collection in DropSlot components
+        setRectTrigger(prev => prev + 1);
+    }, [currentRow]);
 
 
-  useEffect(() => {
-    // Clear previous row rects
-    setCurrentRowRects(Array(4).fill({ rowIndex: null, rect: null }));
-    // Disable button
-    setButtonDisabled(true);
-    // Trigger re-collection in DropSlot components
-    setRectTrigger(prev => prev + 1);
-  }, [currentRow]);
+    const handleRowDropSlotRects = (slotIndex, rowIndex, boundingRect) => {
+        setCurrentRowRects(prevCurrentRowRects => {
+            const updated = [...prevCurrentRowRects];
+            updated[slotIndex] = {
+                'rowIndex': rowIndex,
+                'rect': boundingRect
+            };
 
+            // console.log({ slotIndex, updated });
+            return updated;
+        });
+    };
 
-  const handleRowDropSlotRects = (slotIndex, rowIndex, boundingRect) => {
-    setCurrentRowRects(prevCurrentRowRects => {
-      const updated = [...prevCurrentRowRects];
-      updated[slotIndex] = {
-        'rowIndex': rowIndex,
-        'rect': boundingRect
-      };
-
-      // console.log({ slotIndex, updated });
-      return updated;
-    });
-  };
-
-  const handleDropColor = (slotIndex, rowIndex, color) => {
-    setGuesses(prevGuesses => {
-      const updated = [...prevGuesses];
-      updated[rowIndex] = [...updated[rowIndex]];
-      updated[rowIndex][slotIndex] = color;
-
-      if (!updated[currentRow].includes(null)) {
-        // Enable button
-        setButtonDisabled(false);
-      }
-      // console.log({ buttonDisabled, updated });
-      return updated;
-    });
-  };
-
-  const handleResultsUpdate = (newResult) => {
-    setResults(prevResults => {
-      const updated = [...prevResults];
-      updated[currentRow] = [...newResult];
-
-      // console.log({ currentRow, updated });
-      return updated;
-    });
-  }
-
-  const handleButtonClick = () => {
-    // console.log(guesses[currentRow]);
-    if (guesses[currentRow].includes(null)) {
-      console.log('Not all slots filled!');
-      return;
-    }
-    console.log('Target: ' + target);
-    console.log('Guess: ' + guesses[currentRow]);
-
-    const newResult = checkResult(guesses[currentRow]);
-
-    // console.log(newResult);
-    if (newResult.every((value) => value === 'red')) {
-      console.log("WINNER");
-      setAnswerPositions([...target]);
-      return;
+    const handleGoBtnClick = () => {
+        setCoverPos(0);
+        setGoBtnDisabled(true);
+        setAnswerPositions(Array(4).fill(''));
+        setResults(Array.from({ length: 10 }, () => Array(4).fill('')));
+        setGuesses(Array.from({ length: 10 }, () => Array(4).fill(null)));
+        setTimeout(() => {
+            setNewTarget();
+            setCurrentRow(0);
+        }, 2000);
     }
 
-    if (currentRow < 9) {
-      setCurrentRow(currentRow => currentRow + 1);
-      console.log("TRY AGAIN");
-      return;
+    const handleDropColor = (slotIndex, rowIndex, color) => {
+        setGuesses(prevGuesses => {
+            const updated = [...prevGuesses];
+            updated[rowIndex] = [...updated[rowIndex]];
+            updated[rowIndex][slotIndex] = color;
+
+            if (!updated[currentRow].includes(null)) {
+                // Enable button
+                setCheckBtnDisabled(false);
+            }
+            // console.log({ buttonDisabled, updated });
+            return updated;
+        });
+    };
+
+    const handleResultsUpdate = (newResult) => {
+        setResults(prevResults => {
+            const updated = [...prevResults];
+            updated[currentRow] = [...newResult];
+
+            // console.log({ currentRow, updated });
+            return updated;
+        });
     }
 
-    console.log("LOSER");
-  };
-
-  // 'red'=both correct / 'white'=color correct
-  function checkResult(currentGuess) {
-    const newResult = []; // will be filled with 'red' and 'white'
-    const targetCopy = [...target];
-    const guessCopy = [...currentGuess];
-
-    // First pass: find exact matches (correct color and position)
-    for (let i = 0; i < targetCopy.length; i++) {
-      if (guessCopy[i] === targetCopy[i]) {
-        newResult.push('red');
-        targetCopy[i] = null; // remove matched item
-        guessCopy[i] = null;
-      }
-    }
-
-    // Second pass: find correct color but wrong position
-    for (let i = 0; i < targetCopy.length; i++) {
-      if (guessCopy[i] !== null) {
-        const index = targetCopy.indexOf(guessCopy[i]);
-        if (index !== -1) {
-          newResult.push('white');
-          targetCopy[index] = null; // remove matched item
+    const handleCheckBtnClick = () => {
+        // console.log(guesses[currentRow]);
+        if (guesses[currentRow].includes(null)) {
+            console.log('Not all slots filled!');
+            return;
         }
-      }
+        console.log('Target: ' + target);
+        console.log('Guess: ' + guesses[currentRow]);
+
+        const newResult = checkResult(guesses[currentRow]);
+
+        // console.log(newResult);
+        if (newResult.every((value) => value === 'red')) {
+            console.log("WINNER");
+            handleGameEnd(true);
+            return;
+        }
+
+        if (currentRow < 9) {
+            setCurrentRow(currentRow => currentRow + 1);
+            console.log("TRY AGAIN");
+            return;
+        }
+
+        console.log("LOSER");
+        handleGameEnd(false);
+    };
+
+    // 'red'=both correct / 'white'=color correct
+    function checkResult(currentGuess) {
+        const newResult = []; // will be filled with 'red' and 'white'
+        const targetCopy = [...target];
+        const guessCopy = [...currentGuess];
+
+        // First pass: find exact matches (correct color and position)
+        for (let i = 0; i < targetCopy.length; i++) {
+            if (guessCopy[i] === targetCopy[i]) {
+                newResult.push('red');
+                targetCopy[i] = null; // remove matched item
+                guessCopy[i] = null;
+            }
+        }
+
+        // Second pass: find correct color but wrong position
+        for (let i = 0; i < targetCopy.length; i++) {
+            if (guessCopy[i] !== null) {
+                const index = targetCopy.indexOf(guessCopy[i]);
+                if (index !== -1) {
+                    newResult.push('white');
+                    targetCopy[index] = null; // remove matched item
+                }
+            }
+        }
+
+        // Make sure the result is the full length
+        for (let i = newResult.length; i < targetCopy.length; i++) {
+            newResult.push('');
+        }
+
+        handleResultsUpdate(newResult);
+        return newResult;
     }
 
-    // Make sure the result is the full length
-    for (let i = newResult.length; i < targetCopy.length; i++) {
-      newResult.push('');
+    function handleGameEnd(winner) {
+        setAnswerPositions([...target]);
+        setCoverPos(-4);
+        setCurrentRow(-1);
+        setTimeout(() => {
+            winner ?
+                openMessageDialog('🎉 You got it!', 'You worked out the code, great job!') :
+                openMessageDialog('😢 Out of tries', 'You were close. Why don\'t you try again?');
+            setGoBtnDisabled(false);
+        }, 5000);
     }
 
-    handleResultsUpdate(newResult);
-    return newResult;
-  }
 
+    return (
+        <>
+            <div className="heading-wrapper">
+                <h1>Code Breaker</h1>
+            </div>
 
-  return (
-    <>
-      <div className="heading-wrapper">
-        <h1>Code Breaker</h1>
-      </div>
+            <div className="center-wrapper">
 
-      <div className="center-wrapper">
+                <div className='game-head-wrapper'>
+                    <button
+                        type="button"
+                        className='start-btn'
+                        onClick={handleGoBtnClick}
+                        disabled={goBtnDisabled}>
+                        Go
+                    </button>
 
-        <div className='game-head-wrapper'>
-          {/* Draggable pegs */}
-          <div className="peg-wrapper">
-            {pegColors.map(color => (
-              <div className='peg-inner' key={`${color}-cont`}>
-                <DraggablePeg
-                  key={color}
-                  color={color}
-                  dropSlotsRects={currentRowRects}
-                  setDropColor={handleDropColor}
-                />
-              </div>
-            ))}
-          </div>
+                    {/* Draggable pegs */}
+                    <div className="peg-wrapper">
+                        {pegColors.map(color => (
+                            <div className='peg-inner' key={`${color}-cont`}>
+                                <DraggablePeg
+                                    key={color}
+                                    color={color}
+                                    dropSlotsRects={currentRowRects}
+                                    setDropColor={handleDropColor}
+                                />
+                            </div>
+                        ))}
+                    </div>
 
-          <button
-            type="button"
-            className='guess-btn'
-            onClick={handleButtonClick}
-            disabled={buttonDisabled}>
-            ?
-          </button>
-        </div>
-
-        <div className="game-wrapper">
-          {/* Hidden answer row */}
-          <div className="inner answer-wrapper" style={{ '--_cover-position': '-2rem' }}>
-            {answerPositions.map((color, index) => (
-              <AnswerSlot key={index} color={color} />
-            ))}
-          </div>
-
-          {/* 10 guess rows */}
-          <div className="guess-wrapper">
-            {guesses.map((row, rowIndex) => (
-              <div
-                key={rowIndex}
-                id={`guess-${rowIndex + 1}`}
-                className={rowIndex === currentRow ? '' : 'locked'}>
-                <div className="inner guess-inner">
-                  {row.map((color, slotIndex) => (
-                    <DropSlot
-                      key={slotIndex}
-                      slotIndex={slotIndex}
-                      rowIndex={rowIndex}
-                      color={color}
-                      locked={rowIndex !== currentRow}
-                      rectTrigger={rectTrigger}
-                      getBoundingRect={handleRowDropSlotRects}
-                    />
-                  ))}
+                    <button
+                        type="button"
+                        className='guess-btn'
+                        onClick={handleCheckBtnClick}
+                        disabled={checkBtnDisabled}>
+                        ?
+                    </button>
                 </div>
 
-                <ResultContainer
-                  key={rowIndex}
-                  locked={rowIndex !== currentRow}
-                  result={results[rowIndex]}
-                />
-              </div>
-            ))}
+                <div className="game-wrapper">
+                    {/* Hidden answer row */}
+                    <div
+                        className="inner answer-wrapper"
+                        style={{ '--_cover-position': `${answerCoverPos}rem` }}>
+                        {answerPositions.map((color, index) => (
+                            <AnswerSlot key={index} color={color} />
+                        ))}
+                    </div>
 
-          </div>
-        </div>
-      </div>
-    </>
-  );
+                    {/* 10 guess rows */}
+                    <div className="guess-wrapper">
+                        {guesses.map((row, rowIndex) => (
+                            <div
+                                key={rowIndex}
+                                id={`guess-${rowIndex + 1}`}
+                                className={rowIndex === currentRow ? '' : 'locked'}>
+                                <div className="inner guess-inner">
+                                    {row.map((color, slotIndex) => (
+                                        <DropSlot
+                                            key={slotIndex}
+                                            slotIndex={slotIndex}
+                                            rowIndex={rowIndex}
+                                            color={color}
+                                            locked={rowIndex !== currentRow}
+                                            rectTrigger={rectTrigger}
+                                            getBoundingRect={handleRowDropSlotRects}
+                                        />
+                                    ))}
+                                </div>
+
+                                <ResultContainer
+                                    key={rowIndex}
+                                    locked={rowIndex !== currentRow}
+                                    result={results[rowIndex]}
+                                />
+                            </div>
+                        ))}
+
+                    </div>
+                </div>
+            </div>
+
+            <MessageDialog ref={dialogRef} title={dialogTitle} message={dialogMessage} />
+        </>
+    );
 }
 
 export default App;
