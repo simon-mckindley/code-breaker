@@ -363,6 +363,16 @@ h1 {
         margin: 1rem 2rem 3rem;
     }
 
+    ul {
+        list-style-position: inside;
+        margin: 0;
+        padding: 0;
+
+        li::marker {
+            content: '→ ';
+        }
+    }
+
     .color {
         color: var(--peg-result-yellow);
         font-weight: 600;
@@ -389,6 +399,7 @@ h1 {
             background-color: var(--peg-result-white);
         }
     }
+
 
     .u-line {
         text-decoration: underline;

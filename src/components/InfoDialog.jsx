@@ -17,9 +17,15 @@ const InfoDialog = forwardRef((props, ref) => {
             </div>
             <p>
                 <span>The aim of the game is to guess the colours and positions of the 4 hidden pegs.</span>
-                <span>You have 10 guesses. After each guess you will see feedback pegs.</span>
-                <span><span className="color yellow-span">Yellow</span> for a correct colour peg in the <span className="u-line">correct</span> place.</span>
-                <span><span className="color white-span">White</span> for a correct colour peg in an <span className="u-line">incorrect</span> place.</span>
+                <span>You have 10 guesses. After each guess you will see feedback pegs:</span>
+                <ul>
+                    <li>
+                        <span className="color yellow-span">Yellow</span> for each correct colour peg in the <span className="u-line">correct</span> place.
+                    </li>
+                    <li>
+                        <span className="color white-span">White</span> for each correct colour peg in an <span className="u-line">incorrect</span> place.
+                    </li>
+                </ul>
                 <span>Press the <span className="green-span">Go</span> button to start a new game.</span>
                 <span>Good luck. 😊</span>
             </p>
