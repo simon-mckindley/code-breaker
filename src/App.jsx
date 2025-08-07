@@ -239,39 +239,6 @@ function App() {
 
             <div className="center-wrapper">
 
-                <div className='game-head-wrapper'>
-                    {/* Draggable pegs */}
-                    <div className="peg-wrapper">
-                        {pegColors.map(color => (
-                            <div className='peg-inner' key={`${color}-cont`}>
-                                <DraggablePeg
-                                    key={color}
-                                    color={color}
-                                    dropSlotsRects={currentRowRects}
-                                    setDropColor={handleDropColor}
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    <button
-                        type="button"
-                        className='start-btn'
-                        onClick={handleGoBtnClick}
-                        data-hidden={goBtnDisabled}>
-                        Go
-                    </button>
-
-                    <button
-                        type="button"
-                        className='guess-btn'
-                        onClick={handleCheckBtnClick}
-                        disabled={checkBtnDisabled}
-                        data-hidden={!goBtnDisabled}>
-                        ?
-                    </button>
-                </div>
-
                 <div className="game-wrapper">
                     {/* Hidden answer row */}
                     <div
@@ -313,6 +280,40 @@ function App() {
 
                     </div>
                 </div>
+
+                <div className='game-head-wrapper'>
+                    {/* Draggable pegs */}
+                    <div className="peg-wrapper">
+                        {pegColors.map(color => (
+                            <div className='peg-inner' key={`${color}-cont`}>
+                                <DraggablePeg
+                                    key={color}
+                                    color={color}
+                                    dropSlotsRects={currentRowRects}
+                                    setDropColor={handleDropColor}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <button
+                        type="button"
+                        className='start-btn'
+                        onClick={handleGoBtnClick}
+                        data-hidden={goBtnDisabled}>
+                        Go
+                    </button>
+
+                    <button
+                        type="button"
+                        className='guess-btn'
+                        onClick={handleCheckBtnClick}
+                        disabled={checkBtnDisabled}
+                        data-hidden={!goBtnDisabled}>
+                        ?
+                    </button>
+                </div>
+                
             </div>
 
             <MessageDialog ref={dialogRef} title={dialogTitle} message={dialogMessage} />
