@@ -22,6 +22,20 @@ h1 {
     justify-content: center;
     padding-block: 1rem;
     margin-inline: auto;
+
+    button {
+        position: absolute;
+        top: 0.25em;
+        right: 0.25em;
+        font-weight: 900;
+        background-color: var(--bg-dark);
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        box-shadow:
+            inset -1px -1px 3px 0px var(--dark-shadow),
+            inset 1px 1px 3px 0px var(--light-shadow),
+            1px 1px 4px 0px var(--dark-shadow);
+    }
 }
 
 /* The typing effect */
@@ -53,25 +67,20 @@ h1 {
 }
 
 .game-head-wrapper {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto;
     align-items: center;
     justify-content: center;
     gap: var(--margin);
-    margin-block-end: var(--margin);
 
     button {
         --_shadow-blur: 15px;
         --_shadow-spread: 4px;
-        color: var(--text-color);
-        font: inherit;
         font-weight: 900;
         height: 100%;
-        aspect-ratio: 1 / 1.5;
-        border: none;
+        aspect-ratio: 1 / 1.25;
         background-color: #008000;
         border-radius: 10px;
-
-        cursor: pointer;
         box-shadow: inset -3px -3px 10px 0px var(--dark-shadow),
             inset 3px 3px 10px 0px var(--light-shadow),
             var(--_shadow-spread) var(--_shadow-spread) var(--_shadow-blur) 0px var(--dark-shadow);
@@ -87,14 +96,18 @@ h1 {
             background-color: grey;
             cursor: not-allowed;
         }
+
+        &[data-hidden=true] {
+            display: none;
+        }
     }
 
     .start-btn {
-        font-size: 2.2rem;
+        font-size: 2em;
     }
 
     .guess-btn {
-        font-size: 3rem;
+        font-size: 2.6em;
     }
 }
 
@@ -104,7 +117,7 @@ h1 {
 .peg-wrapper {
     position: relative;
     display: flex;
-    gap: 1rem;
+    gap: var(--margin);
     width: fit-content;
     padding: var(--margin);
     background-color: var(--bg-dark);
@@ -113,7 +126,7 @@ h1 {
 }
 
 .peg-inner {
-    width: 2.2rem;
+    width: 2.2em;
     aspect-ratio: 1;
     border-radius: 1000px;
     background-color: var(--bg-color);
@@ -122,7 +135,7 @@ h1 {
 
 .peg {
     position: absolute;
-    width: 2.2rem;
+    width: 2.2em;
     aspect-ratio: 1;
     border-radius: 1000px;
     box-shadow:
@@ -161,7 +174,7 @@ h1 {
 .game-wrapper {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 1.5rem;
+    gap: var(--margin);
     padding: var(--margin);
     background-color: var(--bg-dark);
     box-shadow: 4px 4px 15px 0px var(--dark-shadow);
@@ -173,8 +186,8 @@ h1 {
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    gap: 1.5rem;
-    padding: 1rem;
+    gap: var(--margin);
+    padding: calc(var(--margin) / 2);
 }
 
 .answer-wrapper,
@@ -185,10 +198,16 @@ h1 {
         inset 3px 3px 10px 0px var(--light-shadow);
 }
 
+.guess-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
 /* peg holes */
 .answer, .guess, .result {
     position: relative;
-    width: 2rem;
+    width: 2em;
     aspect-ratio: 1;
     border-radius: 1000px;
     background-color: rgb(24, 24, 24);
@@ -197,7 +216,7 @@ h1 {
 
 .guess-wrapper {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.75em;
 }
 
 .guess-inner {
@@ -218,8 +237,8 @@ h1 {
 .answer {
     .peg {
         position: absolute;
-        top: -0.1rem;
-        left: -0.1rem;
+        top: -0.1em;
+        left: -0.1em;
         cursor: default;
         z-index: 5;
     }
@@ -229,17 +248,16 @@ h1 {
 .guess-result {
     display: grid;
     grid-template-columns: auto auto;
-    gap: 0.5rem;
-    padding: 1rem;
+    gap: calc(var(--margin) / 2);
+    padding: calc(var(--margin) / 2);
     background-color: var(--bg-overlay);
     border-radius: 6px;
-    margin-top: 0.25rem;
 }
 
 /* result holes */
 .result {
     --_result-pin-delay: 300ms;
-    width: 1rem;
+    width: 1em;
     box-shadow: inset -1px -1px 3px 0px var(--light-shadow);
 
     &:nth-of-type(2) {
@@ -259,31 +277,31 @@ h1 {
     content: '';
     position: absolute;
     inset: 0;
-    width: 1.1rem;
+    width: 1.1em;
     aspect-ratio: 1;
     border-radius: 1000px;
     z-index: 20;
     box-shadow:
         inset -1px -1px 5px 0px var(--dark-shadow),
         inset 1px 1px 5px 0px var(--light-shadow);
-    translate: -3rem 3rem;
+    translate: -3em 3em;
     scale: 1.2;
     opacity: 0;
     animation: result-pins 2000ms ease var(--_result-pin-delay) forwards;
 }
 
-.result.red::after {
-    background-color: red;
+.result.yellow::after {
+    background-color: var(--peg-result-yellow);
 }
 
 .result.white::after {
-    background-color: white;
+    background-color: var(--peg-result-white);
 }
 
 @keyframes result-pins {
     30% {
         opacity: 1;
-        translate: -3rem 3rem;
+        translate: -3em 3em;
         scale: 1.2;
     }
 
@@ -296,7 +314,7 @@ h1 {
 
 /* Answer section */
 .answer-wrapper {
-    --_cover-position: -4rem;
+    --_cover-position: -4em;
     position: relative;
     background-color: var(--bg-overlay);
     overflow: hidden;
@@ -305,7 +323,7 @@ h1 {
 .answer-wrapper:after {
     content: '';
     position: absolute;
-    inset: 0.5rem;
+    inset: 0.5em;
     background-color: var(--bg-dark);
     z-index: 20;
     border-radius: 6px;
@@ -313,14 +331,7 @@ h1 {
         inset -3px -3px 10px 0px var(--dark-shadow),
         inset 3px 3px 10px 0px var(--light-shadow);
     translate: var(--_cover-position);
-    /* animation: cover-in 1500ms ease 1000ms forwards; */
     transition: translate 2000ms;
-}
-
-@keyframes cover-in {
-    100% {
-        translate: 0;
-    }
 }
 
 
@@ -331,14 +342,49 @@ h1 {
     font-size: 1.2rem;
     color: var(--bg-dark);
     background-color: var(--text-color);
+    width: 26em;
+    max-width: 98vw;
     padding: 0;
     border: none;
     border-radius: 10px;
     opacity: 0;
-    animation: dialog-in 1000ms ease forwards;
+    animation: dialog-in 500ms ease-in forwards;
 
     p {
+        display: grid;
+        gap: 0.5em;
         margin: 1rem 2rem 3rem;
+    }
+
+    .color {
+        color: var(--peg-result-yellow);
+        font-weight: 600;
+        border-radius: 6px;
+        padding-inline: 0.25em;
+        background-color: var(--bg-color);
+        
+        &.white-span {
+            color: var(--peg-result-white);
+        }
+
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 0.5em;
+            aspect-ratio: 1;
+            margin-inline-end: 0.5em;
+            border: 1px solid var(--bg-dark);
+            border-radius: 1000px;
+            background-color: var(--peg-result-yellow);
+        }
+
+        &.white-span::before {
+            background-color: var(--peg-result-white);
+        }
+    }
+
+    .u-line {
+        text-decoration: underline;;
     }
 
     .shadow-box {
@@ -364,16 +410,11 @@ h1 {
     }
 
     button {
-        color: var(--text-color);
-        font-family: inherit;
-        font-size: inherit;
         font-weight: 900;
         background-color: var(--bg-dark);
-        border: none;
         border-radius: 4px;
         padding: 0.25rem 0.5rem;
         margin-inline-start: auto;
-        cursor: pointer;
         box-shadow:
             inset -1px -1px 3px 0px var(--dark-shadow),
             inset 1px 1px 3px 0px var(--light-shadow),
@@ -406,5 +447,45 @@ h1 {
 @keyframes dialog-in {
     100% {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    body {
+        font-size: 1rem;
+    }
+}
+
+
+@media screen and (max-width: 800px) {
+    .game-wrapper {
+        grid-template-columns: auto;
+        grid-template-rows: auto 1fr;
+    }
+
+    .inner {
+        flex-direction: row;
+    }
+
+    .guess-wrapper {
+        flex-direction: column;
+    }
+
+    .guess-row {
+        flex-direction: row-reverse;
+    }
+
+    .guess-inner {
+        flex-grow: 1;
+    }
+
+    .answer-wrapper:after {
+        translate: 0 var(--_cover-position);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        font-size: 0.8rem;
     }
 }

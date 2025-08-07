@@ -6,6 +6,7 @@ import DropSlot from './components/DropSlot';
 import AnswerSlot from './components/AnswerSlot';
 import ResultContainer from './components/ResultContainer';
 import MessageDialog from './components/MessageDialog';
+import InfoDialog from './components/InfoDialog';
 
 function getRand(min, max) {
     min = Math.ceil(min);
@@ -15,6 +16,10 @@ function getRand(min, max) {
 
 function App() {
     const pegColors = ['red', 'blue', 'green', 'orange', 'purple', 'brown'];
+
+    // Info dialog
+    const infoDialogRef = useRef();
+    const openInfoDialog = () => {infoDialogRef.current?.open()};
 
     // Message dialog
     const [dialogTitle, setDialogTitle] = useState('');
@@ -32,20 +37,22 @@ function App() {
 
     function setNewTarget() {
         setTarget([
-                pegColors[getRand(0, pegColors.length - 1)],
-                pegColors[getRand(0, pegColors.length - 1)],
-                pegColors[getRand(0, pegColors.length - 1)],
-                pegColors[getRand(0, pegColors.length - 1)]
-            ]);
+            pegColors[getRand(0, pegColors.length - 1)],
+            pegColors[getRand(0, pegColors.length - 1)],
+            pegColors[getRand(0, pegColors.length - 1)],
+            pegColors[getRand(0, pegColors.length - 1)]
+        ]);
     };
 
-    // 10 rows of 4 guess slots each
+    // 10 rows of 4 guess slots each will be all the users guesses
     const [guesses, setGuesses] = useState(
         Array.from({ length: 10 }, () => Array(4).fill(null))
     );
 
+    // Guess row currently active
     const [currentRow, setCurrentRow] = useState(-1);
 
+    // boundingClientRect of each dropSlot in current row
     const [currentRowRects, setCurrentRowRects] = useState(
         Array(4).fill({
             'rowIndex': null,
@@ -53,17 +60,22 @@ function App() {
         })
     );
 
+    // Trigger for new currentRow Rects assignments
     const [rectTrigger, setRectTrigger] = useState(0);
 
+    // Button disable states
     const [checkBtnDisabled, setCheckBtnDisabled] = useState(true);
     const [goBtnDisabled, setGoBtnDisabled] = useState(false);
 
+    // Results array of each guess row
     const [results, setResults] = useState(
         Array.from({ length: 10 }, () => Array(4).fill(''))
     );
 
+    // Array of answerSlots
     const [answerPositions, setAnswerPositions] = useState(Array(4).fill(''));
 
+    // State of answer cover position (open:-4, closed:0)
     const [answerCoverPos, setCoverPos] = useState(-4);
 
     // When currentRow changes
@@ -86,6 +98,18 @@ function App() {
         return () => window.removeEventListener('resize', handleResize);
     }, [])
 
+    // Start a new game
+    const handleGoBtnClick = () => {
+        setCoverPos(0);
+        setGoBtnDisabled(true);
+        setAnswerPositions(Array(4).fill(''));
+        setResults(Array.from({ length: 10 }, () => Array(4).fill('')));
+        setGuesses(Array.from({ length: 10 }, () => Array(4).fill(null)));
+        setTimeout(() => {
+            setNewTarget();
+            setCurrentRow(0);
+        }, 2000);
+    }
 
     const handleRowDropSlotRects = (slotIndex, rowIndex, boundingRect) => {
         setCurrentRowRects(prevCurrentRowRects => {
@@ -99,25 +123,14 @@ function App() {
         });
     };
 
-    // Start the game
-    const handleGoBtnClick = () => {
-        setCoverPos(0);
-        setGoBtnDisabled(true);
-        setAnswerPositions(Array(4).fill(''));
-        setResults(Array.from({ length: 10 }, () => Array(4).fill('')));
-        setGuesses(Array.from({ length: 10 }, () => Array(4).fill(null)));
-        setTimeout(() => {
-            setNewTarget();
-            setCurrentRow(0);
-        }, 2000);
-    }
-
+    // Sets the guesses array when a peg is dropped on a slot
     const handleDropColor = (slotIndex, rowIndex, color) => {
         setGuesses(prevGuesses => {
             const updated = [...prevGuesses];
             updated[rowIndex] = [...updated[rowIndex]];
             updated[rowIndex][slotIndex] = color;
 
+            // if all current row slots are filled
             if (!updated[currentRow].includes(null)) {
                 // Enable button
                 setCheckBtnDisabled(false);
@@ -127,6 +140,7 @@ function App() {
         });
     };
 
+    // Set new row results to the array
     const handleResultsUpdate = (newResult) => {
         setResults(prevResults => {
             const updated = [...prevResults];
@@ -146,7 +160,7 @@ function App() {
 
         const newResult = checkResult(guesses[currentRow]);
 
-        if (newResult.every((value) => value === 'red')) {
+        if (newResult.every((value) => value === 'yellow')) {
             console.log("WINNER");
             handleGameEnd(true);
             return;
@@ -162,16 +176,16 @@ function App() {
         handleGameEnd(false);
     };
 
-    // 'red'=both correct / 'white'=color correct
+    // 'yellow'=both correct / 'white'=color correct
     function checkResult(currentGuess) {
-        const newResult = []; // will be filled with 'red' and 'white'
+        const newResult = []; // will be filled with 'yellow' and 'white'
         const targetCopy = [...target];
         const guessCopy = [...currentGuess];
 
         // First pass: find exact matches (correct color and position)
         for (let i = 0; i < targetCopy.length; i++) {
             if (guessCopy[i] === targetCopy[i]) {
-                newResult.push('red');
+                newResult.push('yellow');
                 targetCopy[i] = null; // remove matched item
                 guessCopy[i] = null;
             }
@@ -198,12 +212,13 @@ function App() {
     }
 
     function handleGameEnd(winner) {
+        const guesses = currentRow + 1;
         setAnswerPositions([...target]);
         setCoverPos(-4);
         setCurrentRow(-1);
         setTimeout(() => {
             winner ?
-                openMessageDialog('🎉 You got it!', 'You worked out the code, great job!') :
+                openMessageDialog('🎉 You got it!', `You worked out the code in ${guesses} turns, great job!`) :
                 openMessageDialog('😢 Out of tries', 'You were close. Why don\'t you try again?');
             setGoBtnDisabled(false);
         }, 5000);
@@ -212,21 +227,19 @@ function App() {
 
     return (
         <>
-            <div className="heading-wrapper">
+            <header className="heading-wrapper">
                 <h1>Code Breaker</h1>
-            </div>
+                <button 
+                    type="button" 
+                    className='info-btn' 
+                    title='Game Info'
+                    onClick={openInfoDialog}>?
+                </button>
+            </header>
 
             <div className="center-wrapper">
 
                 <div className='game-head-wrapper'>
-                    <button
-                        type="button"
-                        className='start-btn'
-                        onClick={handleGoBtnClick}
-                        disabled={goBtnDisabled}>
-                        Go
-                    </button>
-
                     {/* Draggable pegs */}
                     <div className="peg-wrapper">
                         {pegColors.map(color => (
@@ -243,9 +256,18 @@ function App() {
 
                     <button
                         type="button"
+                        className='start-btn'
+                        onClick={handleGoBtnClick}
+                        data-hidden={goBtnDisabled}>
+                        Go
+                    </button>
+
+                    <button
+                        type="button"
                         className='guess-btn'
                         onClick={handleCheckBtnClick}
-                        disabled={checkBtnDisabled}>
+                        disabled={checkBtnDisabled}
+                        data-hidden={!goBtnDisabled}>
                         ?
                     </button>
                 </div>
@@ -266,7 +288,7 @@ function App() {
                             <div
                                 key={rowIndex}
                                 id={`guess-${rowIndex + 1}`}
-                                className={rowIndex === currentRow ? '' : 'locked'}>
+                                className={`guess-row ${rowIndex === currentRow ? '' : 'locked'}`}>
                                 <div className="inner guess-inner">
                                     {row.map((color, slotIndex) => (
                                         <DropSlot
@@ -294,6 +316,7 @@ function App() {
             </div>
 
             <MessageDialog ref={dialogRef} title={dialogTitle} message={dialogMessage} />
+            <InfoDialog ref={infoDialogRef} />
         </>
     );
 }
