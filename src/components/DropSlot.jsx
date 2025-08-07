@@ -8,6 +8,7 @@ export default function DropSlot({ slotIndex, rowIndex, color, locked, rectTrigg
             const rect = slotRef.current.getBoundingClientRect();
             getBoundingRect(slotIndex, rowIndex, rect);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rectTrigger]);
 
     return (

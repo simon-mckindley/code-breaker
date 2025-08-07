@@ -144,6 +144,7 @@ h1 {
         inset -1px -1px 7px 0px var(--dark-shadow),
         inset 1px 1px 7px 0px var(--light-shadow);
     cursor: grab;
+    transition: scale 200ms ease;
 
     &.red {
         background-color: var(--peg-red);
@@ -229,11 +230,15 @@ h1 {
     transition: opacity 300ms;
 }
 
-/* fade contents of locked container unless it already has a peg */
-.locked .guess:not(:has(.peg)),
-.locked:not(:has(.result[data-peg=true])) .result {
-    opacity: 0.3;
+/* fade contents of locked container unless it is completed */
+.guess-row.locked:not(.completed) {
+
+    .guess,
+    .result {
+        opacity: 0.3;
+    }
 }
+
 
 .guess,
 .answer {
@@ -364,7 +369,7 @@ h1 {
         border-radius: 6px;
         padding-inline: 0.25em;
         background-color: var(--bg-color);
-        
+
         &.white-span {
             color: var(--peg-result-white);
         }
@@ -386,7 +391,8 @@ h1 {
     }
 
     .u-line {
-        text-decoration: underline;;
+        text-decoration: underline;
+        ;
     }
 
     .shadow-box {

@@ -19,7 +19,7 @@ function App() {
 
     // Info dialog
     const infoDialogRef = useRef();
-    const openInfoDialog = () => {infoDialogRef.current?.open()};
+    const openInfoDialog = () => { infoDialogRef.current?.open() };
 
     // Message dialog
     const [dialogTitle, setDialogTitle] = useState('');
@@ -100,6 +100,7 @@ function App() {
 
     // Start a new game
     const handleGoBtnClick = () => {
+        setCurrentRow(-1);
         setCoverPos(0);
         setGoBtnDisabled(true);
         setAnswerPositions(Array(4).fill(''));
@@ -167,7 +168,9 @@ function App() {
         }
 
         if (currentRow < 9) {
-            setCurrentRow(currentRow => currentRow + 1);
+            setTimeout(() => {
+                setCurrentRow(currentRow => currentRow + 1);
+            }, 1000);
             console.log("TRY AGAIN");
             return;
         }
@@ -213,12 +216,12 @@ function App() {
 
     function handleGameEnd(winner) {
         const guesses = currentRow + 1;
+        const winMess = guesses <= 5 ? 'that\'s amazing!' : 'great job!';
         setAnswerPositions([...target]);
         setCoverPos(-4);
-        setCurrentRow(-1);
         setTimeout(() => {
             winner ?
-                openMessageDialog('🎉 You got it!', `You worked out the code in ${guesses} turns, great job!`) :
+                openMessageDialog('🎉 You got it!', `You worked out the code in ${guesses} turns, ${winMess}`) :
                 openMessageDialog('😢 Out of tries', 'You were close. Why don\'t you try again?');
             setGoBtnDisabled(false);
         }, 5000);
@@ -229,9 +232,9 @@ function App() {
         <>
             <header className="heading-wrapper">
                 <h1>Code Breaker</h1>
-                <button 
-                    type="button" 
-                    className='info-btn' 
+                <button
+                    type="button"
+                    className='info-btn'
                     title='Game Info'
                     onClick={openInfoDialog}>?
                 </button>
@@ -255,7 +258,7 @@ function App() {
                             <div
                                 key={rowIndex}
                                 id={`guess-${rowIndex + 1}`}
-                                className={`guess-row ${rowIndex === currentRow ? '' : 'locked'}`}>
+                                className={`guess-row ${rowIndex > currentRow ? 'locked' : ''} ${rowIndex < currentRow ? 'completed' : ''}`}>
                                 <div className="inner guess-inner">
                                     {row.map((color, slotIndex) => (
                                         <DropSlot
@@ -272,7 +275,6 @@ function App() {
 
                                 <ResultContainer
                                     key={rowIndex}
-                                    locked={rowIndex !== currentRow}
                                     result={results[rowIndex]}
                                 />
                             </div>
@@ -313,7 +315,7 @@ function App() {
                         ?
                     </button>
                 </div>
-                
+
             </div>
 
             <MessageDialog ref={dialogRef} title={dialogTitle} message={dialogMessage} />

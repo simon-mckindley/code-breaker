@@ -20,6 +20,7 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
             pos.current.startY = y;
             peg.style.cursor = 'grabbing';
             peg.style.zIndex = '50';
+            peg.style.scale = '1.2';
         };
 
         const moveDrag = (x, y) => {
@@ -34,8 +35,10 @@ export default function DraggablePeg({ color, dropSlotsRects, setDropColor }) {
         const endDrag = () => {
             peg.style.cursor = '';
             peg.style.zIndex = '';
+            peg.style.scale = '';
             const pegRect = peg.getBoundingClientRect();
 
+            // eslint-disable-next-line no-unused-vars
             const overlap = dropSlotsRects.find((slot, index) => {
                 const slotRect = slot.rect;
                 if (slotRect) {

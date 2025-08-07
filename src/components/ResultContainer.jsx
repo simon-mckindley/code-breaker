@@ -1,7 +1,7 @@
 
-export default function ResultContainer({ result, locked }) {
+export default function ResultContainer({ result }) {
     return (
-        <div className={`guess-result ${locked ? 'locked' : ''}`}>
+        <div className={'guess-result'}>
             {result.map((color, index) => {
                 const pegged = color ? true : false;
 
