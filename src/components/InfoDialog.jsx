@@ -20,6 +20,7 @@ const InfoDialog = forwardRef((props, ref) => {
                 <span>You have 10 guesses. After each guess you will see feedback pegs.</span>
                 <span><span className="color yellow-span">Yellow</span> for a correct colour peg in the <span className="u-line">correct</span> place.</span>
                 <span><span className="color white-span">White</span> for a correct colour peg in an <span className="u-line">incorrect</span> place.</span>
+                <span>Press the <span className="green-span">Go</span> button to start a new game.</span>
                 <span>Good luck. 😊</span>
             </p>
             <div className="dialog-footer"></div>

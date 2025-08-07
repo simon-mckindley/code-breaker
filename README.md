@@ -63,7 +63,8 @@ The `DraggablePeg` component supports:
 
 ## 📌 Future Improvements
 
-- Add scoring or logic for matching colors
+- Add user login and scoring or logic
+- Add controls to customise the game
 - Make pegs cloneable instead of resetting
 - Add sound effects or animations
 
@@ -73,3 +74,10 @@ The `DraggablePeg` component supports:
 - JavaScript (ES6+)
 - CSS3
 
+## ✍️ Created By
+
+Simon Mckindley
+
+Check out my other projects: [simon-mckindley.netlify.app](https://simon-mckindley.netlify.app/)
+
+A live version of the app is here: [sm-code-breaker.netlify.app](https://sm-code-breaker.netlify.app/)
