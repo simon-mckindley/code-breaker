@@ -15,7 +15,7 @@ const InfoDialog = forwardRef((props, ref) => {
                 <h3>👋 Welcome to Code Breaker</h3>
                 <button onClick={() => dialogRef.current?.close()}>X</button>
             </div>
-            <p>
+            <div className="dialog-content">
                 <span>The aim of the game is to guess the colours and positions of the 4 hidden pegs.</span>
                 <span>You have 10 guesses. After each guess you will see feedback pegs:</span>
                 <ul>
@@ -28,7 +28,7 @@ const InfoDialog = forwardRef((props, ref) => {
                 </ul>
                 <span>Press the <span className="green-span">Go</span> button to start a new game.</span>
                 <span>Good luck. 😊</span>
-            </p>
+            </div>
             <div className="dialog-footer"></div>
             <div className="shadow-box"></div>
         </dialog>

@@ -15,7 +15,7 @@ const MessageDialog = forwardRef((props, ref) => {
                 <h3>{props.title || 'Message'}</h3>
                 <button onClick={() => dialogRef.current?.close()}>X</button>
             </div>
-            <p>{props.message || '...'}</p>
+            <p className="dialog-content">{props.message || '...'}</p>
             <div className="dialog-footer"></div>
             <div className="shadow-box"></div>
         </dialog>

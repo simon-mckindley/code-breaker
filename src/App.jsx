@@ -82,8 +82,6 @@ function App() {
     useEffect(() => {
         // Clear previous row rects
         setCurrentRowRects(Array(4).fill({ rowIndex: null, rect: null }));
-        // Disable button
-        setCheckBtnDisabled(true);
         // Trigger re-collection in DropSlot components
         setRectTrigger(prev => prev + 1);
     }, [currentRow]);
@@ -159,6 +157,9 @@ function App() {
         // console.log('Target: ' + target);
         // console.log('Guess: ' + guesses[currentRow]);
 
+        // Disable button
+        setCheckBtnDisabled(true);
+
         const newResult = checkResult(guesses[currentRow]);
 
         if (newResult.every((value) => value === 'yellow')) {
@@ -216,7 +217,7 @@ function App() {
 
     function handleGameEnd(winner) {
         const guesses = currentRow + 1;
-        const winMess = guesses <= 5 ? 'that\'s amazing!' : 'great job!';
+        const winMess = guesses > 5 ? 'great job!' : guesses > 2 ? 'that\'s amazing!' : 'you\'re a genius!';
         setAnswerPositions([...target]);
         setCoverPos(-4);
         setTimeout(() => {
